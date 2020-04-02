@@ -58,6 +58,30 @@
             <artifactId>guava</artifactId>
             <version>28.2-jre</version>
         </dependency>
+        <dependency>
+            <groupId>net.mingsoft</groupId>
+            <artifactId>ms-basic</artifactId>
+            <version>1.0.13</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.mingsoft</groupId>
+            <artifactId>ms-mpeople</artifactId>
+            <version>1.0.18</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.mingsoft</groupId>
+            <artifactId>ms-base</artifactId>
+            <version>1.0.13</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.mingsoft</groupId>
+            <artifactId>ms-basic</artifactId>
+            <version>1.0.21</version>
+            <scope>compile</scope>
+        </dependency>
 
 
     </dependencies>

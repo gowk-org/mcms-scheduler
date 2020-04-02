@@ -1,77 +1,60 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>公众号列表</title>
-    <#include "/include/head-file.ftl" />
-	<style>
-		[v-cloak] {
-			display: none;
-		}
-		.ms-container {
-			height: calc(100% - 62px);
-		}
-		.ms-table-pagination {
-		   height: calc(100vh - 156px);
-	   }
-	</style>
+	<title>任务</title>
+		<#include "../../include/head-file.ftl">
+		<#include "../../include/increase-search.ftl">
 </head>
 <body>
-	<div id="index"   v-cloak>
-		<el-header class="ms-header" height="50px">
-			<el-col :span="12">
-				<@shiro.hasPermission name="weixin:save"><el-button type="primary" icon="el-icon-plus" size="mini" @click="openForm()">新增</el-button></@shiro.hasPermission>
-				<@shiro.hasPermission name="weixin:del"><el-button type="danger" icon="el-icon-delete" size="mini" @click="del()" >删除</el-button></@shiro.hasPermission>
-			</el-col>
-		</el-header>
+	<div id="index" class="ms-index" v-cloak>
+		<ms-search ref="search" @search="search" :condition-data="conditionList" :conditions="conditions"></ms-search>
+			<el-header class="ms-header" height="50px">
+				<el-col :span="12">
+					<@shiro.hasPermission name="scheduler:task:save">
+					<el-button type="primary" icon="el-icon-plus" size="mini" @click="save()">新增</el-button>
+				</@shiro.hasPermission>
+					<@shiro.hasPermission name="scheduler:task:del">
+					<el-button type="danger" icon="el-icon-delete" size="mini" @click="del(selectionList)"  :disabled="!selectionList.length">删除</el-button>
+					</@shiro.hasPermission>
+				</el-col>
+			</el-header>
 		<el-main class="ms-container">
-			<el-table v-loading="loading" class="ms-table-pagination" ref="multipleTable" border="true"  :data="dataList" tooltip-effect="dark" @selection-change="handleSelectionChange" :max-height="tableHeight" >
+			<el-table height="calc(100vh - 68px)" v-loading="loading" ref="multipleTable" border :data="dataList" tooltip-effect="dark" @selection-change="handleSelectionChange">
 				<template slot="empty">
 					{{emptyText}}
 				</template>
-                <el-table-column type="selection" width="50"></el-table-column>
-                <el-table-column label="编号" width="100" align="center"><template slot-scope="scope">{{ scope.row.weixinId }}</template></el-table-column>
-                <el-table-column label="公众号名称" width="220">
-	                <template slot-scope="scope">
-						<@shiro.hasPermission name="weixin:edit">
-							{{ scope.row.weixinName }}
+				<el-table-column type="selection" width="40"></el-table-column>
+                 <el-table-column label="任务名称" align="left" prop="jobName">
+                 </el-table-column>
+                 <el-table-column label="组名称" align="left" prop="jobGroup">
+                 </el-table-column>
+                 <el-table-column label="CRON表达式" align="left" prop="jobCron">
+                 </el-table-column>
+            <el-table-column label="是否启用" align="left" prop="jobState">
+            </el-table-column>
+				<el-table-column label="操作" width="180" align="center">
+					<template slot-scope="scope">
+						<@shiro.hasPermission name="scheduler:task:update">
+						<el-link type="primary" :underline="false" @click="save(scope.row.id)">编辑</el-link>
 						</@shiro.hasPermission>
-						<@shiro.lacksPermission name="weixin:edit">
-							{{ scope.row.weixinName }}
-						</@shiro.lacksPermission>
-					</template>
-                </el-table-column>
-                <el-table-column label="微信号" width="220">
-                	<template slot-scope="scope">
-						<@shiro.hasPermission name="weixin:update">
-                			{{ scope.row.weixinNo }}
+						<@shiro.hasPermission name="scheduler:task:del">
+						<el-link type="primary" :underline="false" @click="del([scope.row])">删除</el-link>
 						</@shiro.hasPermission>
-						<@shiro.lacksPermission name="weixin:update">
-							{{ scope.row.weixinNo }}
-						</@shiro.lacksPermission>
 					</template>
-                </el-table-column>
-                <el-table-column label="公众号类型" width="120" align="center">
-                	<template slot-scope="scope">
-                		<template v-if="scope.row.weixinType==0">
-                			服务号 
-                		</template>
-                		<template v-if="scope.row.weixinType==1">
-                			订阅号
-                		</template>
-                	</template>
-                </el-table-column>
-                <el-table-column label="微信token"><template slot-scope="scope">{{ scope.row.weixinToken }}</template></el-table-column>
-            	<el-table-column label="操作" align="center" width="180">
-            		<template slot-scope="scope">
-	            		<a :href="ms.manager + '/mweixin/'+scope.row.weixinId+'/function.do'">进入</a>
-	            		<a :href="ms.manager + '/mweixin/form.do?weixinId='+scope.row.weixinId">编辑</a>
-            		</template>
-            	</el-table-column>
-            </el-table>
-            <el-pagination background :page-sizes="[5, 10, 20]" layout="total, sizes, prev, pager, next, jumper" :current-page="currentPage"  :page-size="pagesize"  :total="total" class="ms-pagination" @current-change='currentChange' @size-change="sizeChange">
+				</el-table-column>
+			</el-table>
+            <el-pagination
+					background
+					:page-sizes="[10,20,30,40,50,100]"
+					layout="total, sizes, prev, pager, next, jumper"
+					:current-page="currentPage"
+					:page-size="pageSize"
+					:total="total"
+					class="ms-pagination"
+					@current-change='currentChange'
+					@size-change="sizeChange">
             </el-pagination>
-		</el-main> 
+         </el-main>
 	</div>
 </body>
 
@@ -80,55 +63,94 @@
 var indexVue = new Vue({
 	el: '#index',
 	data:{
-		dataList: [], //微信列表
-		selData: [], //选中列表
+		conditionList:[
+        {action:'and', field: 'job_name', el: 'eq', model: 'jobName', name: '任务名称', type: 'input'},
+        {action:'and', field: 'job_group', el: 'eq', model: 'jobGroup', name: '组名称', type: 'input'},
+        {action:'and', field: 'job_cron', el: 'eq', model: 'jobCron', name: 'CRON表达式', type: 'input'},
+            {action:'and', field: 'job_state', el: 'eq', model: 'jobState', name: '是否启用', key: 'value', title: 'value', type: 'select', multiple: false},
+		],
+		conditions:[],
+		dataList: [], //任务列表
+		selectionList:[],//任务列表选中
 		total: 0, //总记录数量
-        pagesize: 10, //页面数量
+        pageSize: 10, //页面数量
         currentPage:1, //初始页
-        mananger: ms.manager,
-		loading:true,
-		emptyText:'',
-	},
-	methods: {
-		//查询列表
-		list: function() {
-			var that = this;
-			setTimeout(()=>{
-				ms.http.get(ms.manager + "/mweixin/list.do").then(function(data){
-					if(data.data.total <=0){
-						that.loading = false;
-						that.emptyText='暂无数据'
-						that.dataList =[];
-					}else{
-						that.emptyText='';
-						that.loading = false;
-						that.total = data.data.total;
-						that.dataList = data.data.rows.reverse();
-					}
-				}).catch(function(err){
-					console.log(err);
-				});
-			},500);
+        manager: ms.manager,
+		loadState:false,
+		loading: true,//加载状态
+		emptyText:'',//提示文字
+                jobStateOptions:[{"value":"启用"},{"value":"停用"}],
+		//搜索表单
+		form:{
+			sqlWhere:null,
 		},
-	    //选中行，selection返回每一行选中行的对象
-        handleSelectionChange: function(selection) {
-            this.selData = selection;
-        },
-        //删除
-        del: function(){
+	},
+	watch:{
+	},
+	methods:{
+	    //查询列表
+	    list: function() {
+	    	var that = this;
+			that.loading = true;
+			that.loadState = false;
+			var page={
+				pageNo: that.currentPage,
+				pageSize : that.pageSize
+			}
+			var form = JSON.parse(JSON.stringify(that.form))
+			for (key in form){
+				if(!form[key]){
+					delete  form[key]
+				}
+			}
+			history.replaceState({form:form,page:page},"");
+			ms.http.post(ms.manager+"/scheduler/task/list.do",form.sqlWhere?Object.assign({},{sqlWhere:form.sqlWhere}, page)
+				:Object.assign({},form, page)).then(
+					function(res) {
+						if(that.loadState){
+							that.loading = false;
+						}else {
+							that.loadState = true
+						}
+						if (!res.result||res.data.total <= 0) {
+							that.emptyText = '暂无数据'
+							that.dataList = [];
+							that.total = 0;
+						} else {
+							that.emptyText = '';
+							that.total = res.data.total;
+							that.dataList = res.data.rows;
+						}
+					}).catch(function(err) {
+				console.log(err);
+			});
+			setTimeout(function(){
+				if(that.loadState){
+					that.loading = false;
+				}else {
+					that.loadState = true
+				}
+			}, 500);
+			},
+		//任务列表选中
+		handleSelectionChange:function(val){
+			this.selectionList = val;
+		},
+		//删除
+        del: function(row){
         	var that = this;
-        	that.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        	that.$confirm('此操作将永久删除所选内容, 是否继续?', '提示', {
 					    	confirmButtonText: '确定',
 					    	cancelButtonText: '取消',
 					    	type: 'warning'
-					    }).then(() => {
-					    	ms.http.post(ms.manager + "/mweixin/delete.do", this.selData,{
+					    }).then(function() {
+					    	ms.http.post(ms.manager+"/scheduler/task/delete.do", row.length?row:[row],{
             					headers: {
                 					'Content-Type': 'application/json'
                 				}
             				}).then(
-	            				function(data){
-		            				if (data.result) { 	
+	            				function(res){
+		            				if (res.result) {
 										that.$notify({
 						     				type: 'success',
 						        			message: '删除成功!'
@@ -143,38 +165,53 @@ var indexVue = new Vue({
 										});
 									}
 	            				});
-					    }).catch(() => {
-					    	that.$notify({
-					        	type: 'info',
-					        	message: '已取消删除'
-					    	});          
-				    	});	            	
+					    })
+        		},
+		//新增
+        save:function(id){
+			if(id){
+				location.href=this.manager+"/scheduler/task/form.do?id="+id;
+			}else {
+				location.href=this.manager+"/scheduler/task/form.do";
+			}
         },
-        //新增
-        openForm:function(){
-        	location.href = ms.manager + "/mweixin/form.do";
-        },
+        //表格数据转换
         //pageSize改变时会触发
         sizeChange:function(pagesize) {
-			this.loading=true;
-            this.pagesize = pagesize;
+			this.loading = true;
+            this.pageSize = pagesize;
             this.list();
         },
         //currentPage改变时会触发
         currentChange:function(currentPage) {
-			this.loading=true;
-            this.currentPage = currentPage;
+			this.loading = true;
+			this.currentPage = currentPage;
             this.list();
         },
-	},	
-	mounted(){
-		this.list();
+		search:function(data){
+        	this.form.sqlWhere = JSON.stringify(data);
+        	this.list();
+		},
+		//重置表单
+		rest:function(){
+			this.currentPage = 1;
+			this.form.sqlWhere = null;
+			this.$refs.searchForm.resetFields();
+			this.list();
+		},
 	},
-	computed:{
-		//表格最大高度 用来自适应
-		tableHeight:function () {
-			return document.documentElement.clientHeight - 100;
-		}
+created:function(){
+	if(history.hasOwnProperty("state")&& history.state){
+		this.form = history.state.form;
+		this.currentPage = history.state.page.pageNo;
+		this.pageSize = history.state.page.pageSize;
+	}
+		this.list();
 	},
 })
 </script>
+<style>
+	#index .ms-container {
+		height: calc(100vh - 78px);
+	}
+</style>

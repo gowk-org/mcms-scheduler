@@ -1,7 +1,10 @@
 package net.mingsoft.ext.scheduler.scheduler;
 
+import com.alibaba.druid.support.json.JSONUtils;
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.ImmutableMap;
-import net.mingsoft.ext.scheduler.job.HelloJob;
+import net.mingsoft.ext.scheduler.biz.ITaskBiz;
+import net.mingsoft.ext.scheduler.entity.TaskEntity;
 import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +13,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
@@ -24,12 +29,15 @@ public class DemoScheduler implements CommandLineRunner {
 
     @Autowired
     private SchedulerFactoryBean schedulerFactory;
+    @Autowired
+    ITaskBiz taskBiz;
+
 
     @Override
     public void run(String...args) throws Exception {
 
         Scheduler scheduler = schedulerFactory.getScheduler();
-
+        scheduler.clear();
         Map<JobDetail, Trigger> jobTriggerMap = getJobDetailTriggerMap();
 
         jobTriggerMap.forEach((job, trigger) -> {
@@ -43,10 +51,38 @@ public class DemoScheduler implements CommandLineRunner {
 
     private Map<JobDetail, Trigger> getJobDetailTriggerMap() {
         Map<JobDetail, Trigger> jobTriggerMap = new HashMap<>();
+TaskEntity taskEntity=new TaskEntity();
+taskEntity.setJobState(1);
 
-        jobTriggerMap.putAll(createJobWithTrigger(HelloJob.class,
+        Map<String,String> wheres=new HashMap<>();
+        wheres.put("job_state","1");
+        List<String> fields=new ArrayList<>();
+        fields.add("job_name");
+        fields.add("job_cron");
+        fields.add("job_group");
+        List<Map> list = taskBiz.queryBySQL("ext_task",fields,wheres);//.queryAll();//(task1);//.queryAll();//.queryBySQL("ext_task",null,map);
+        for(Map map:list){
+            Class aClass = null;
+            try {
+                //TaskEntity task=(TaskEntity)taskBiz.getEntity(((Long)map.get("id")).intValue());
+                String json=JSONUtils.toJSONString(map);
+                TaskEntity task=JSON.parseObject(json,TaskEntity.class);
+                //TaskEntity task=(TaskEntity)JSONUtils.parse(json);
+                //TaskEntity task=(TaskEntity)ConvertUtil.map2Object(map,taskEntity.getClass());
+                //TaskEntity task=new TaskEntity();
+                //BeanUtils.copyProperties(map,task);
+                //TaskEntity task=(TaskEntity)MapToEntryConvertUtils.map2Object(map,TaskEntity.class);
+                aClass = Class.forName(task.getJobName());
+                String jobName=task.getJobGroup()+"/"+task.getJobName();
+                jobTriggerMap.putAll(createJobWithTrigger(aClass,jobName,new HashMap<>(),jobName,task.getJobCron()));
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                //throw new Exception(e.getMessage());
+            }
+        }
+       /* jobTriggerMap.putAll(createJobWithTrigger(HelloJob.class,
                 "JobGroup/Job1", ImmutableMap.of("message", "A"),
-                "TriggerGroup/Trigger1", "0/5 * * * * ?"));
+                "TriggerGroup/Trigger1", "0/5 * * * * ?"));*/
 /*        jobTriggerMap.putAll(createJobWithTrigger(HelloJob.class,
                 "JobGroup/Job2", ImmutableMap.of("message", "B"),
                 "TriggerGroup/Trigger2", "0/10 * * * * ?"));
