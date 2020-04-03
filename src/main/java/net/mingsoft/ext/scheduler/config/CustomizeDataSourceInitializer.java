@@ -26,7 +26,7 @@ public class CustomizeDataSourceInitializer {
 
     private DatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScripts(functionScript);
+        //populator.addScripts(functionScript);
         populator.setSeparator("$$");
         return populator;
     }

@@ -60,24 +60,17 @@ taskEntity.setJobState(1);
         fields.add("job_name");
         fields.add("job_cron");
         fields.add("job_group");
-        List<Map> list = taskBiz.queryBySQL("ext_task",fields,wheres);//.queryAll();//(task1);//.queryAll();//.queryBySQL("ext_task",null,map);
+        List<Map> list = taskBiz.queryBySQL("ext_task",fields,wheres);
         for(Map map:list){
             Class aClass = null;
             try {
-                //TaskEntity task=(TaskEntity)taskBiz.getEntity(((Long)map.get("id")).intValue());
                 String json=JSONUtils.toJSONString(map);
                 TaskEntity task=JSON.parseObject(json,TaskEntity.class);
-                //TaskEntity task=(TaskEntity)JSONUtils.parse(json);
-                //TaskEntity task=(TaskEntity)ConvertUtil.map2Object(map,taskEntity.getClass());
-                //TaskEntity task=new TaskEntity();
-                //BeanUtils.copyProperties(map,task);
-                //TaskEntity task=(TaskEntity)MapToEntryConvertUtils.map2Object(map,TaskEntity.class);
                 aClass = Class.forName(task.getJobName());
                 String jobName=task.getJobGroup()+"/"+task.getJobName();
                 jobTriggerMap.putAll(createJobWithTrigger(aClass,jobName,new HashMap<>(),jobName,task.getJobCron()));
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
-                //throw new Exception(e.getMessage());
             }
         }
        /* jobTriggerMap.putAll(createJobWithTrigger(HelloJob.class,
