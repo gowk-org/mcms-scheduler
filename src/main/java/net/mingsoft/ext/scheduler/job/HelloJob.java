@@ -8,10 +8,17 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 
+/**
+ * <p>HelloJob class.</p>
+ *
+ * @author user1
+ * @version $Id: $Id
+ */
 public class HelloJob implements Job {
 
     private static final Logger LOG = LoggerFactory.getLogger(HelloJob.class);
 
+    /** {@inheritDoc} */
     @Override
     public void execute(JobExecutionContext context) {
         String groupName = context.getJobDetail().getKey().getGroup();

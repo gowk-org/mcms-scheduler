@@ -26,12 +26,24 @@ import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 import java.io.IOException;
 import java.util.Properties;
 
+/**
+ * <p>SchedulerConfig class.</p>
+ *
+ * @author user1
+ * @version $Id: $Id
+ */
 @Configuration
 //@ConditionalOnProperty(name = "quartz.enabled")
 public class SchedulerConfig {
 
     private static final Logger LOG = LoggerFactory.getLogger(SchedulerConfig.class);
 
+    /**
+     * <p>jobFactory.</p>
+     *
+     * @param applicationContext a {@link org.springframework.context.ApplicationContext} object.
+     * @return a {@link org.quartz.spi.JobFactory} object.
+     */
     @Bean
     public JobFactory jobFactory(ApplicationContext applicationContext) {
         AutowiringSpringBeanJobFactory jobFactory = new AutowiringSpringBeanJobFactory();
@@ -39,6 +51,15 @@ public class SchedulerConfig {
         return jobFactory;
     }
 
+    /**
+     * <p>schedulerFactoryBean.</p>
+     *
+     * @param dataSource a {@link javax.sql.DataSource} object.
+     * @param jobFactory a {@link org.quartz.spi.JobFactory} object.
+     * @param simpleJobTrigger a {@link org.quartz.Trigger} object.
+     * @return a {@link org.springframework.scheduling.quartz.SchedulerFactoryBean} object.
+     * @throws java.io.IOException if any.
+     */
     @Bean
     public SchedulerFactoryBean schedulerFactoryBean(DataSource dataSource, JobFactory jobFactory,
                                                      @Qualifier("simpleJobTrigger") Trigger simpleJobTrigger)
@@ -53,6 +74,12 @@ public class SchedulerConfig {
         return factory;
     }
 
+    /**
+     * <p>quartzProperties.</p>
+     *
+     * @return a {@link java.util.Properties} object.
+     * @throws java.io.IOException if any.
+     */
     @Bean
     public Properties quartzProperties() throws IOException {
         PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
@@ -61,11 +88,22 @@ public class SchedulerConfig {
         return propertiesFactoryBean.getObject();
     }
 
+    /**
+     * <p>simpleJobDetail.</p>
+     *
+     * @return a {@link org.springframework.scheduling.quartz.JobDetailFactoryBean} object.
+     */
     @Bean
     public JobDetailFactoryBean simpleJobDetail() {
         return createJobDetail(HelloJob.class);
     }
 
+    /**
+     * <p>simpleJobTrigger.</p>
+     *
+     * @param jobDetail a {@link org.quartz.JobDetail} object.
+     * @return a {@link org.springframework.scheduling.quartz.SimpleTriggerFactoryBean} object.
+     */
     @Bean(name = "simpleJobTrigger")
     public SimpleTriggerFactoryBean simpleJobTrigger(@Qualifier("simpleJobDetail") JobDetail jobDetail) {
         long frequency=2000;

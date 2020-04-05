@@ -22,6 +22,12 @@ import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
 
+/**
+ * <p>DemoScheduler class.</p>
+ *
+ * @author user1
+ * @version $Id: $Id
+ */
 @Component
 public class DemoScheduler implements CommandLineRunner {
 
@@ -33,6 +39,7 @@ public class DemoScheduler implements CommandLineRunner {
     ITaskBiz taskBiz;
 
 
+    /** {@inheritDoc} */
     @Override
     public void run(String...args) throws Exception {
 

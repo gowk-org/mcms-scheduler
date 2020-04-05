@@ -22,9 +22,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 /**
  * 任务管理控制层
+ *
  * @author z
  * 创建日期：2020-4-2 17:12:52
  * 历史修订：
+ * @version $Id: $Id
  */
 @Api(value = "任务接口")
 @Controller("WebschedulerTaskAction")
@@ -41,7 +43,13 @@ public class TaskAction extends net.mingsoft.ext.scheduler.action.BaseAction{
 
 	/**
 	 * 查询任务列表
+	 *
 	 * @param task 任务实体
+	 * @param response a {@link javax.servlet.http.HttpServletResponse} object.
+	 * @param request a {@link javax.servlet.http.HttpServletRequest} object.
+	 * @param model a {@link org.springframework.ui.ModelMap} object.
+	 * @param result a {@link org.springframework.validation.BindingResult} object.
+	 * @return a {@link net.mingsoft.base.entity.ResultData} object.
 	 */
 	@ApiOperation(value = "查询任务列表接口")
 	@ApiImplicitParams({
@@ -66,7 +74,12 @@ public class TaskAction extends net.mingsoft.ext.scheduler.action.BaseAction{
 
 	/**
 	 * 获取任务
+	 *
 	 * @param task 任务实体
+	 * @param response a {@link javax.servlet.http.HttpServletResponse} object.
+	 * @param request a {@link javax.servlet.http.HttpServletRequest} object.
+	 * @param model a {@link org.springframework.ui.ModelMap} object.
+	 * @return a {@link net.mingsoft.base.entity.ResultData} object.
 	 */
 	@ApiOperation(value = "获取任务列表接口")
     @ApiImplicitParam(name = "id", value = "编号", required =true,paramType="query")
@@ -95,9 +108,13 @@ public class TaskAction extends net.mingsoft.ext.scheduler.action.BaseAction{
 	})
 
 	/**
-	* 保存任务
-	* @param task 任务实体
-	*/
+	 * 保存任务
+	 *
+	 * @param task 任务实体
+	 * @param response a {@link javax.servlet.http.HttpServletResponse} object.
+	 * @param request a {@link javax.servlet.http.HttpServletRequest} object.
+	 * @return a {@link net.mingsoft.base.entity.ResultData} object.
+	 */
 	@PostMapping("/save")
 	@ResponseBody
 	public ResultData save(@ModelAttribute @ApiIgnore TaskEntity task, HttpServletResponse response, HttpServletRequest request) {
@@ -115,7 +132,12 @@ public class TaskAction extends net.mingsoft.ext.scheduler.action.BaseAction{
 	}
 
 	/**
-	 * @param task 任务实体
+	 * <p>delete.</p>
+	 *
+	 * @param tasks a {@link java.util.List} object.
+	 * @param response a {@link javax.servlet.http.HttpServletResponse} object.
+	 * @param request a {@link javax.servlet.http.HttpServletRequest} object.
+	 * @return a {@link net.mingsoft.base.entity.ResultData} object.
 	 */
 	@ApiOperation(value = "批量删除任务列表接口")
 	@PostMapping("/delete")
@@ -130,9 +152,13 @@ public class TaskAction extends net.mingsoft.ext.scheduler.action.BaseAction{
 	}
 
 	/**
-	*	更新任务列表
-	* @param task 任务实体
-	*/
+	 *	更新任务列表
+	 *
+	 * @param task 任务实体
+	 * @param response a {@link javax.servlet.http.HttpServletResponse} object.
+	 * @param request a {@link javax.servlet.http.HttpServletRequest} object.
+	 * @return a {@link net.mingsoft.base.entity.ResultData} object.
+	 */
 	 @ApiOperation(value = "更新任务列表接口")
 	 @ApiImplicitParams({
 	    @ApiImplicitParam(name = "id", value = "编号", required =true,paramType="query"),

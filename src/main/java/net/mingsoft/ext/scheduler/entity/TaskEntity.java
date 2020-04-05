@@ -7,11 +7,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import net.mingsoft.base.entity.BaseEntity;
 import java.util.Date;
 /**
-* 任务实体
-* @author z
-* 创建日期：2020-4-2 17:12:52
-* 历史修订：
-*/
+ * 任务实体
+ *
+ * @author z
+ * 创建日期：2020-4-2 17:12:52
+ * 历史修订：
+ * @version $Id: $Id
+ */
 @Data
 public class TaskEntity extends BaseEntity {
 

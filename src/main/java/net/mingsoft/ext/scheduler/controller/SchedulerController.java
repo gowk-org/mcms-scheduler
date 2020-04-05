@@ -22,6 +22,12 @@ import static org.quartz.JobBuilder.newJob;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
 
+/**
+ * <p>SchedulerController class.</p>
+ *
+ * @author user1
+ * @version $Id: $Id
+ */
 @RestController
 public class SchedulerController {
 
@@ -30,6 +36,12 @@ public class SchedulerController {
     @Autowired
     private SchedulerFactoryBean schedulerFactory;
 
+    /**
+     * <p>listJobs.</p>
+     *
+     * @return a {@link java.util.List} object.
+     * @throws org.quartz.SchedulerException if any.
+     */
     @RequestMapping(value = "/api/list",
             method = RequestMethod.GET, produces = "application/json")
     public List listJobs() throws SchedulerException {
@@ -52,6 +64,13 @@ public class SchedulerController {
         return jobInfoList;
     }
 
+    /**
+     * <p>removeJob.</p>
+     *
+     * @param jobName a {@link java.lang.String} object.
+     * @param groupName a {@link java.lang.String} object.
+     * @return a {@link java.lang.Boolean} object.
+     */
     @RequestMapping(value = "/api/stop/{jobName}/{groupName}",
             method = RequestMethod.GET, produces = "application/json")
     public Boolean removeJob(@PathVariable("jobName") String jobName,
@@ -66,6 +85,15 @@ public class SchedulerController {
         }
     }
 
+    /**
+     * <p>addJob.</p>
+     *
+     * @param jobName a {@link java.lang.String} object.
+     * @param groupName a {@link java.lang.String} object.
+     * @param quantity a int.
+     * @param interval a int.
+     * @return a {@link java.lang.Boolean} object.
+     */
     @RequestMapping(value = "/api/start/{jobName}/{groupName}/{quantity}/{interval}",
             method = RequestMethod.GET, produces = "application/json")
     public Boolean addJob(@PathVariable("jobName") String jobName,
