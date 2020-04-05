@@ -5,8 +5,8 @@ import java.util.MissingResourceException;
 /**
  * scheduler基础控制层
  * @author z
- * 创建日期：2020-4-2 17:12:52<br/>
- * 历史修订：<br/>
+ * 创建日期：2020-4-2 17:12:52
+ * 历史修订：
  */
 public class BaseAction extends net.mingsoft.basic.action.BaseAction{
 

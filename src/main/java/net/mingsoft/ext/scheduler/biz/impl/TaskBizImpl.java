@@ -33,8 +33,8 @@ import net.mingsoft.ext.scheduler.dao.ITaskDao;
 /**
  * 任务管理持久化层
  * @author z
- * 创建日期：2020-4-2 17:12:52<br/>
- * 历史修订：<br/>
+ * 创建日期：2020-4-2 17:12:52
+ * 历史修订：
  */
  @Service("schedulertaskBizImpl")
 public class TaskBizImpl extends BaseBizImpl implements ITaskBiz {
