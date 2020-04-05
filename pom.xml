@@ -27,8 +27,8 @@
 
     <scm>
         <url>https://gitee.com/gowk/mcms-scheduler</url>
-        <connection>https://gitee.com/gowk/mcms-scheduler.git</connection>
-        <developerConnection>https://gitee.com/gowk/mcms-scheduler</developerConnection>
+        <connection>scm:git:git@gitee.com:gowk/mcms-scheduler.git</connection>
+        <developerConnection>scm:git:git@gitee.com:gowk/mcms-scheduler.git</developerConnection>
     </scm>
 
     <developers>
